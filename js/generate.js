@@ -37,7 +37,7 @@
     styleChips.appendChild(b);
   });
 
-  const ORDER=['gemini','cloudflare','pollinations','sd-turbo','iagratis','perchance','pixqo','mevolab','hornofplenty'];
+  const ORDER=['gemini','puter','cloudflare','pollinations','sd-turbo','iagratis','perchance','pixqo','mevolab','hornofplenty'];
   const enabled=ORDER.filter(id=>GUPT.backends[id]&&GUPT.backends[id].enabled);
 
   selBackend.innerHTML='';
@@ -137,3 +137,4 @@
     document.body.appendChild(a); a.click(); a.remove();
   });
 })();
+        
