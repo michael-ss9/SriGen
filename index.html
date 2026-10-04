@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SriGen — Free AI Image Generator</title>
-<meta name="description" content="SriGen: Free AI image generator — 8 styles, no sign-up. Realistic, Anime, 3D, Cyberpunk aur more.">
+<meta name="description" content="SriGen: Free AI image generator — 8 styles, multi-backend AI engine.">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
 </head>
@@ -12,7 +12,7 @@
 
 <header class="site-header">
   <div class="logo">🎨 Sri<span>Gen</span></div>
-  <p class="tagline">Free AI Image Generator • 8 Styles • No Sign-up</p>
+  <p class="tagline">Free AI Image Generator • Multi-Backend AI • 8 Styles</p>
 </header>
 
 <main class="container">
@@ -21,7 +21,7 @@
     <h2 class="section-title">🎨 AI Image Generator</h2>
     <p class="drag-hint">Style chuno, prompt likho — AI banayega</p>
     <div class="chips" id="genStyles"></div>
-    <input type="text" id="genPrompt" class="gen-input" placeholder="Jaise: a cat wearing sunglasses on a beach" maxlength="300">
+    <input type="text" id="genPrompt" class="gen-input" placeholder="Jaise: a boy in garden" maxlength="300">
     <div class="gen-row">
       <select id="genSize" class="gen-select">
         <option value="1024x1024">1:1 Square</option>
@@ -29,12 +29,14 @@
         <option value="720x1280">9:16 Tall</option>
       </select>
       <select id="genModel" class="gen-select">
-        <option value="flux">💎 Best Quality</option>
-        <option value="turbo">⚡ Fast</option>
+        <option value="flux">💎 Flux (Best)</option>
+        <option value="turbo">⚡ Turbo (Fast)</option>
       </select>
     </div>
+    <select id="genBackend" class="gen-select" style="width:100%;margin-bottom:12px"></select>
     <button class="btn btn-ai" id="genBtn">🎨 Generate</button>
     <p class="hint" id="genStatus"></p>
+    <div id="genKeys"></div>
     <div class="gen-result hidden" id="genResult">
       <img id="genImg" alt="AI generated image">
       <div class="btn-row center">
@@ -45,9 +47,9 @@
   </section>
 
   <section class="features">
+    <div class="feature"><span>🔀</span><h3>Multi-Backend</h3><p>3 AI engines — ek fail, doosra automatic. Aur jald 9!</p></div>
     <div class="feature"><span>🎛️</span><h3>8 Styles</h3><p>Realistic, Anime, 3D, Cyberpunk, Watercolor aur more.</p></div>
-    <div class="feature"><span>🆓</span><h3>100% Free</h3><p>No sign-up, no watermark, unlimited generations.</p></div>
-    <div class="feature"><span>⚡</span><h3>Fast + Quality</h3><p>Flux best quality, Turbo fastest — tumhari choice.</p></div>
+    <div class="feature"><span>🆓</span><h3>100% Free</h3><p>No sign-up, no watermark. Keys daalo, limit khatam.</p></div>
   </section>
 
 </main>
@@ -56,6 +58,16 @@
   <p>SriGen — Free &amp; Open Source • Made with ❤️ on GitHub Pages</p>
 </footer>
 
+<script src="js/backends/gemini.js"></script>
+<script src="js/backends/cloudflare.js"></script>
+<script src="js/backends/pollinations.js"></script>
+<script src="js/backends/sd-turbo-browser.js"></script>
+<script src="js/backends/iagratis.js"></script>
+<script src="js/backends/perchance.js"></script>
+<script src="js/backends/pixqo.js"></script>
+<script src="js/backends/mevolab.js"></script>
+<script src="js/backends/hornofplenty.js"></script>
 <script src="js/generate.js"></script>
 </body>
-</html>
+    </html>
+    
