@@ -1,6 +1,8 @@
 /* ============================================
-   SriGen — AI IMAGE GENERATOR (standalone)
-   Free cloud: Pollinations.ai (no API key)
+   SriGen — AI IMAGE GENERATOR v3
+   - Auto-retry (no cooldown, image khud aayegi)
+   - Prompt reinforcement (exact scene follow)
+   - Flux mode: LLM enhance ON
    ============================================ */
 (function(){
   'use strict';
@@ -10,16 +12,17 @@
         dl=$('genDownload'), again=$('genAgain'), styleChips=$('genStyles');
 
   let currentURL=null, currentSeed=0, selectedStyle='realistic';
+  let retryCount=0, retryTimer=null, loading=false;
 
   const STYLES={
-    realistic:  {label:'🎯 Realistic',  boost:', ultra realistic photograph, 8k, professional photography, sharp focus, natural lighting'},
-    anime:      {label:'🌸 Anime',      boost:', anime style, vibrant colors, studio ghibli inspired, detailed illustration'},
-    digital:    {label:'🎨 Digital Art',boost:', digital art, concept art, trending on artstation, highly detailed, dramatic lighting'},
-    oilpaint:   {label:'🖼️ Oil Paint',  boost:', classical oil painting, textured brushstrokes, canvas texture, fine art'},
-    render3d:   {label:'🧊 3D Render',  boost:', 3d render, octane render, unreal engine 5, cinematic lighting, hyper detailed'},
-    photo:      {label:'📷 DSLR Photo', boost:', dslr photograph, 50mm lens, bokeh background, natural skin tones, high detail'},
-    cyberpunk:  {label:'🌃 Cyberpunk',  boost:', cyberpunk style, neon lights, futuristic city, blade runner atmosphere, cinematic'},
-    watercolor: {label:'💧 Watercolor', boost:', watercolor painting, soft flowing colors, artistic, paper texture, delicate'}
+    realistic:  {label:'🎯 Realistic',  boost:'ultra realistic photograph, sharp focus, dslr quality'},
+    anime:      {label:'🌸 Anime',      boost:'anime style, vibrant colors, detailed illustration'},
+    digital:    {label:'🎨 Digital Art',boost:'digital art, concept art, dramatic lighting'},
+    oilpaint:   {label:'🖼️ Oil Paint',  boost:'oil painting, textured brushstrokes, fine art'},
+    render3d:   {label:'🧊 3D Render',  boost:'3d render, octane render, cinematic lighting'},
+    photo:      {label:'📷 DSLR Photo', boost:'dslr photograph, 50mm lens, professional photo'},
+    cyberpunk:  {label:'🌃 Cyberpunk',  boost:'cyberpunk, neon lights, futuristic, cinematic'},
+    watercolor: {label:'💧 Watercolor', boost:'watercolor painting, soft colors, artistic'}
   };
 
   Object.keys(STYLES).forEach(key=>{
@@ -37,33 +40,75 @@
   function setS(m){ if(status) status.textContent=m; }
 
   function generate(){
+    // Loading ke dauran dabaya = Cancel
+    if(loading){
+      clearTimeout(retryTimer);
+      loading=false;
+      btn.disabled=false; btn.textContent='🎨 Generate';
+      setS('🚫 Cancel ho gaya — jab ready ho tab Generate dabao');
+      return;
+    }
     const prompt=input.value.trim();
     if(!prompt){ setS('⚠️ Pehle likho kya banana hai'); return; }
+    retryCount=0;
+    requestImage(prompt);
+  }
+
+  function requestImage(prompt){
+    loading=true;
     const parts=selSize.value.split('x');
     const model=selModel.value;
     currentSeed=Math.floor(Math.random()*999999);
-    const full=prompt + STYLES[selectedStyle].boost + ', masterpiece, best quality, highly detailed';
+
+    // PROMPT REINFORCEMENT: user prompt 2 baar (weight double) + chhota style boost
+    const full=prompt + '. Scene: ' + prompt + ', ' + STYLES[selectedStyle].boost + ', high quality, detailed';
+
     currentURL='https://image.pollinations.ai/prompt/'+encodeURIComponent(full)
       +'?width='+parts[0]+'&height='+parts[1]
-      +'&seed='+currentSeed+'&model='+model+'&nologo=true';
-    btn.disabled=true; btn.textContent='⏳ Generating…';
+      +'&seed='+currentSeed+'&model='+model
+      +(model==='flux'?'&enhance=true':'')
+      +'&nologo=true&referrer=srigen';
+
+    btn.disabled=true; btn.textContent='🚫 Cancel';
     wrap.classList.remove('hidden');
-    setS(model==='flux' ? '🎨 Quality mode: 20-50 sec…' : '⚡ Fast mode: 5-15 sec…');
+    setS(model==='flux' ? '🎨 Quality mode: ban rahi hai…' : '⚡ Fast mode: ban rahi hai…');
+
+    let finished=false;
+    // 60 sec mein na aaye = fail (timeout)
+    const timeout=setTimeout(()=>{
+      if(!finished){ finished=true; onFail(prompt); }
+    },60000);
+
     img.onload=()=>{
+      if(finished) return; finished=true; clearTimeout(timeout);
+      loading=false; retryCount=0;
       btn.disabled=false; btn.textContent='🎨 Generate';
       setS('✅ Ready! Download karo ya 🔄 New Variation banao.');
       wrap.scrollIntoView({behavior:'smooth',block:'nearest'});
     };
     img.onerror=()=>{
-      btn.disabled=false; btn.textContent='🎨 Generate';
-      setS('❌ Server busy — 10 sec baad dubara try karo.');
+      if(finished) return; finished=true; clearTimeout(timeout);
+      onFail(prompt);
     };
     img.src=currentURL;
   }
 
+  function onFail(prompt){
+    retryCount++;
+    if(retryCount>12){
+      loading=false;
+      btn.disabled=false; btn.textContent='🎨 Generate';
+      setS('❌ Server bahut busy tha (4 min try kiya). 5 min baad dubara dabao.');
+      return;
+    }
+    const wait=Math.min(30, 10+retryCount*2); // 12s,14s,16s... max 30s
+    setS(`🔄 Server busy — auto-retry ${retryCount}/12 (khud ${wait} sec mein try hoga)… Cancel chahiye toh button dabao`);
+    retryTimer=setTimeout(()=>{ if(loading) requestImage(prompt); }, wait*1000);
+  }
+
   btn.addEventListener('click', generate);
   input.addEventListener('keydown', e=>{ if(e.key==='Enter') generate(); });
-  again.addEventListener('click', generate);
+  again.addEventListener('click', ()=>{ if(!loading) generate(); });
 
   dl.addEventListener('click', async ()=>{
     if(!currentURL) return;
