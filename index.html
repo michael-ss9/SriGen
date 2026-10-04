@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SriGen — Free AI Image Generator</title>
+<meta name="description" content="SriGen: Free AI image generator — 8 styles, no sign-up. Realistic, Anime, 3D, Cyberpunk aur more.">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">🎨 Sri<span>Gen</span></div>
+  <p class="tagline">Free AI Image Generator • 8 Styles • No Sign-up</p>
+</header>
+
+<main class="container">
+
+  <section class="card" id="generatorCard">
+    <h2 class="section-title">🎨 AI Image Generator</h2>
+    <p class="drag-hint">Style chuno, prompt likho — AI banayega</p>
+    <div class="chips" id="genStyles"></div>
+    <input type="text" id="genPrompt" class="gen-input" placeholder="Jaise: a cat wearing sunglasses on a beach" maxlength="300">
+    <div class="gen-row">
+      <select id="genSize" class="gen-select">
+        <option value="1024x1024">1:1 Square</option>
+        <option value="1280x720">16:9 Wide</option>
+        <option value="720x1280">9:16 Tall</option>
+      </select>
+      <select id="genModel" class="gen-select">
+        <option value="flux">💎 Best Quality</option>
+        <option value="turbo">⚡ Fast</option>
+      </select>
+    </div>
+    <button class="btn btn-ai" id="genBtn">🎨 Generate</button>
+    <p class="hint" id="genStatus"></p>
+    <div class="gen-result hidden" id="genResult">
+      <img id="genImg" alt="AI generated image">
+      <div class="btn-row center">
+        <button class="btn btn-primary" id="genDownload">⬇ Download</button>
+        <button class="btn btn-ghost" id="genAgain">🔄 New Variation</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature"><span>🎛️</span><h3>8 Styles</h3><p>Realistic, Anime, 3D, Cyberpunk, Watercolor aur more.</p></div>
+    <div class="feature"><span>🆓</span><h3>100% Free</h3><p>No sign-up, no watermark, unlimited generations.</p></div>
+    <div class="feature"><span>⚡</span><h3>Fast + Quality</h3><p>Flux best quality, Turbo fastest — tumhari choice.</p></div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>SriGen — Free &amp; Open Source • Made with ❤️ on GitHub Pages</p>
+</footer>
+
+<script src="js/generate.js"></script>
+</body>
+</html>
